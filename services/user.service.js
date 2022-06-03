@@ -5,6 +5,7 @@ var jwt = require('jsonwebtoken');
 
 // Saving the context of this module inside the _the variable
 _this = this
+var mongoose = require('mongoose')
 
 // Async function to get the User List
 exports.getUsers = async function (query, page, limit) {
@@ -17,8 +18,9 @@ exports.getUsers = async function (query, page, limit) {
     // Try Catch the awaited promise to handle the error 
     try {
         console.log("Query",query)
-        var Users = await User.paginate(query, options)
+        var Users = await User.find({}).lean()
         // Return the Userd list that was retured by the mongoose promise
+        console.log(Users);
         return Users;
 
     } catch (e) {
@@ -28,15 +30,19 @@ exports.getUsers = async function (query, page, limit) {
     }
 }
 
+
 exports.createUser = async function (user) {
     // Creating a new Mongoose Object by using the new keyword
     var hashedPassword = bcrypt.hashSync(user.password, 8);
-    
+
     var newUser = new User({
         name: user.name,
+        lastName: user.lastName,
         email: user.email,
-        date: new Date(),
-        password: hashedPassword
+        password: hashedPassword,
+        phone: user.phone,
+        securityQ: user.securityQ,
+        answer: user.answer
     })
 
     try {
@@ -57,69 +63,32 @@ exports.createUser = async function (user) {
 
 exports.updateUser = async function (user) {
     
-    var id = {name :user.name}
-
     try {
         //Find the old User Object by the Id
-        var oldUser = await User.findOne(id);
+        var oldUser = await User.findOne({email : user.email});
     } catch (e) {
         throw Error("Error occured while Finding the User")
     }
     // If no old User Object exists return false
     if (!oldUser) {
+        console.log('Usuario No conseguido')
         return false;
     }
+    else
+        console.log("Old User Servicio: ", oldUser)
     //Edit the User Object
     var hashedPassword = bcrypt.hashSync(user.password, 8);
     oldUser.name = user.name
+    oldUser.lastName = user.lastName
     oldUser.email = user.email
     oldUser.password = hashedPassword
+    oldUser.phone = user.phone
+    oldUser.securityQ = user.securityQ
+    oldUser.answer = user.answer
     try {
         var savedUser = await oldUser.save()
         return savedUser;
     } catch (e) {
         throw Error("And Error occured while updating the User");
     }
-}
-
-exports.deleteUser = async function (id) {
-
-    // Delete the User
-    try {
-        var deleted = await User.remove({
-            _id: id
-        })
-        if (deleted.n === 0 && deleted.ok === 1) {
-            throw Error("User Could not be deleted")
-        }
-        return deleted;
-    } catch (e) {
-        throw Error("Error Occured while Deleting the User")
-    }
-}
-
-
-exports.loginUser = async function (user) {
-
-    // Creating a new Mongoose Object by using the new keyword
-    try {
-        // Find the User 
-        console.log("login:",user)
-        var _details = await User.findOne({
-            email: user.email
-        });
-        var passwordIsValid = bcrypt.compareSync(user.password, _details.password);
-        if (!passwordIsValid) throw Error("Invalid username/password")
-
-        var token = jwt.sign({
-            id: _details._id
-        }, process.env.SECRET, {
-            expiresIn: 86400 // expires in 24 hours
-        });
-        return {token:token, user:_details};
-    } catch (e) {
-        // return a Error message describing the reason     
-        throw Error("Error while Login User")
-    }
-
 }

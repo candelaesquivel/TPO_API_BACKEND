@@ -10,7 +10,11 @@ var UserSchema = new mongoose.Schema({
     phone:String,
     securityQ:String,
     answer: String
-})
+},
+
+{ collection : 'users'}
+
+)
 
 UserSchema.plugin(mongoosePaginate)
 const User = mongoose.model('User', UserSchema)

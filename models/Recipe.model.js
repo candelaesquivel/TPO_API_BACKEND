@@ -7,11 +7,12 @@ var RecipeSchema = new mongoose.Schema({
     ingredients: Array,
     idCategory: Number,
     difficulty: Number,
-    procces : String,
+    process : String,
     averageMark: Number,
     countMark: Number,
     photo: String,
-    publicationStatus : Number
+    publicationStatus : Number,
+    userEmail: String
 
 })
 
