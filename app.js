@@ -11,7 +11,10 @@ var cors = require('cors');
 
 //importo rutas
 var indexRouter = require('./routes/index');
-var apiRouter = require('./routes/user'); 
+var apiRouter = require('./routes/user');
+var aboutRouter = require ('./routes/about-us');
+var loginRouter = require('./routes/login');
+var profileRouter = require('./routes/profile');
 
 //instancio el servidor
 var app = express();
@@ -35,6 +38,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 //Indico las rutas de los endpoint
 app.use('/api', apiRouter);
 app.use('/', indexRouter);
+app.use('/about-us', aboutRouter);
+app.use('/login', loginRouter);
+app.use('/profile', profileRouter);
 
 //console.log("processENV",process.env);
 if (process.env.NODE_ENV === 'Development') {
@@ -46,7 +52,7 @@ if (process.env.NODE_ENV === 'Development') {
 var mongoose = require('mongoose')
 mongoose.Promise = bluebird;
 let url = `${process.env.DATABASE1}${process.env.DATABASE2}=${process.env.DATABASE3}=${process.env.DATABASE4}`
-console.log("BD",url);
+//console.log("BD",url);
 let opts = {
   useNewUrlParser : true, 
   connectTimeoutMS:20000, 
