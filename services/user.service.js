@@ -99,3 +99,32 @@ exports.updateUser = async function (user) {
         throw Error("And Error occured while updating the User");
     }
 }
+
+
+exports.loginUser = async function (logInUser) {
+   
+    try {
+        
+        var exists = await User.exists({email : logInUser.email})
+
+        if (exists)
+        {
+            var userData = await User.findOne({email : logInUser.email})
+            var passwordIsValid = bcrypt.compareSync(logInUser.password,userData.password);
+            if (!passwordIsValid) throw Error("Invalid username/password")
+
+            var token = jwt.sign({
+                id: userData._id
+            }, process.env.SECRET, {
+                expiresIn: 86400 // expires in 24 hours
+            });
+            return {token:token, user: userData };
+        }
+        else
+            throw Error("Email is not linked to an user")
+    } catch (e) {
+        // return a Error message describing the reason 
+        console.log(e)    
+        throw Error("Error while Log in User")
+    }
+}

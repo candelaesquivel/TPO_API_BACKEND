@@ -77,6 +77,7 @@ exports.loginUser = async function (req, res, next) {
         email: req.body.email,
         password: req.body.password
     }
+
     try {
         // Calling the Service function with the new object from the Request Body
         var loginUser = await UserService.loginUser(User);

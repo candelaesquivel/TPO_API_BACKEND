@@ -5,7 +5,7 @@ var UserController = require('../controllers/users.controller');
 
 // Authorize each API with middleware and map to the Controller Functions
 /* GET users listing. */
-router.get('/', UserController.getUsers)
+router.post('/', UserController.loginUser)
 
 // Export the Router
 module.exports = router;
