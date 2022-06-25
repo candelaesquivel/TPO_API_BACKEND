@@ -3,9 +3,10 @@ var mongoosePaginate = require('mongoose-paginate')
 
 
 var RecipeSchema = new mongoose.Schema({
+    idRecipe: Number,
     name: String,
     ingredients: Array,
-    idCategory: Number,
+    categories: Array,
     difficulty: Number,
     process : String,
     averageMark: Number,
@@ -13,7 +14,6 @@ var RecipeSchema = new mongoose.Schema({
     photo: String,
     publicationStatus : Number,
     userEmail: String
-
 })
 
 RecipeSchema.plugin(mongoosePaginate)

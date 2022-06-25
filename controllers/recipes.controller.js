@@ -38,7 +38,7 @@ exports.updateRecipe = async function (req, res, next) {
 
     // Id is necessary for the update
     if (!req.body.id) {
-        return res.status(400).json({status: 400., message: "Id be present"})
+        return res.status(400).json({status: 400, message: "Id be present"})
     }
     
     var Recipe = {
@@ -63,5 +63,61 @@ exports.updateRecipe = async function (req, res, next) {
         return res.status(200).json({status: 200, data: updatedRecipe, message: "Succesfully Updated Recipe"})
     } catch (e) {
         return res.status(400).json({status: 400., message: e.message})
+    }
+}
+
+exports.deleteRecipe = async function (req, res, next) {
+
+    console.log(req);
+
+    var id = req.query.id;
+
+    console.log("Id Controoller: ", id)
+
+    try {
+        //var deleted = await Recipe.deleteRecipe(id)
+        res.status(200).send("Succesfully Deleted... ");
+    } catch (e) {
+        return res.status(400).json({status: 400, message: e.message})
+    }
+}
+
+exports.createRecipe = async function (req, res, next) {
+    var recipe = {
+        idRecipe: req.body.idRecipe,
+        name: req.body.name,
+        ingredients: req.body.ingredients,
+        categories: req.body.categories,
+        difficulty: req.body.difficulty,
+        process : req.body.process,
+        averageMark: 0,
+        countMark: 0,
+        photo: req.body.photo,
+        publicationStatus : false,
+        userEmail: req.body.userEmail
+    }
+
+    try {
+        var createdRecipe = await RecipeService.createRecipe(recipe)
+        return res.status(201).json({data : createdRecipe, message: "Succesfully Created Recipe"})
+    } catch (e) {
+        return res.status(400).json({status: 400, message: e.message})
+    }
+}
+
+
+exports.califyRecipe = async function (req, res, next) {
+    var email = req.body.email;
+    var calification = req.body.calification;
+    var recipe = {
+        idRecipe : req.body.idRecipe
+    }
+
+    try {
+        var calify = await RecipeService.califyRecipe(email,calification,recipe)
+        res.status(200).send("Succesfully calify ");
+    } catch (e) {
+        console.log(e)
+        return res.status(400).json({status: 400, message: e.message})
     }
 }

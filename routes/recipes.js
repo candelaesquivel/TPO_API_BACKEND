@@ -9,6 +9,10 @@ var RecipeController = require('../controllers/recipes.controller');
 router.get('/', RecipeController.getRecipes)
 router.get('/my-recipes', RecipeController.getRecipesByEmail)
 router.post('/update-recipe', RecipeController.updateRecipe)
+//router.delete('/delete/', RecipeController.deleteRecipe)
+router.post('/delete/', RecipeController.deleteRecipe)
+router.post('/calify', RecipeController.califyRecipe)
+router.post('/create', RecipeController.createRecipe)
 
 // Export the Router
 module.exports = router;
