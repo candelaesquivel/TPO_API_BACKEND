@@ -8,8 +8,8 @@ var UserController = require('../controllers/users.controller');
 router.get('/test', function(req, res, next) {
     res.send('Llegaste a la ruta de  api/user');
   });
-router.post('/register/', UserController.createUser)
-router.post('/login/', UserController.loginUser)
+router.post('/register', UserController.createUser)
+router.post('/login', UserController.loginUser)
 router.get('/users', UserController.getUsers)
 
 

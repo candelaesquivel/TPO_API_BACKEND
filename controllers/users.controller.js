@@ -87,3 +87,34 @@ exports.loginUser = async function (req, res, next) {
         return res.status(400).json({status: 400, message: "Invalid username or password"})
     }
 }
+
+exports.getSecurityQuestionUser = async function (req, res, next) {
+    // Req.Body contains the form submit values.
+    console.log("body",req.body)
+    var User = {
+        email: req.body.email,
+    }
+    try {
+        var question = await UserService.getSecurityQuestionUser(User.email);
+        return res.status(201).json({data : question, message: "Question find"})
+    } catch (e) {
+        //Return an Error Response Message with Code and the Error Message.
+        return res.status(400).json({status: 400, message: "Invalid email"})
+    }
+}
+
+exports.checkSecurityAnswer = async function (req, res, next) {
+    // Req.Body contains the form submit values.
+    console.log("body",req.body)
+    var User = {
+        email: req.body.email,
+        answer: req.body.answer,
+    }
+    try {
+        var answer = await UserService.checkSecurityAnswer(User);
+        return res.status(201).json({data : answer, message: "Answer correct"})
+    } catch (e) {
+        //Return an Error Response Message with Code and the Error Message.
+        return res.status(400).json({status: 400, message: "Invalid answer"})
+    }
+}

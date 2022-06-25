@@ -128,3 +128,54 @@ exports.loginUser = async function (logInUser) {
         throw Error("Error while Log in User")
     }
 }
+
+exports.getSecurityQuestionUser = async function (emailSecurity) {
+   
+    console.log("Email Recibido: ", emailSecurity)
+
+
+    try {
+        
+        var exists = await User.exists({email : emailSecurity})
+        if (exists)
+        {
+            var userData = await User.findOne({email : emailSecurity}  )
+            return userData.securityQ;
+        }
+        else
+            throw Error("Email is not linked to an user")
+    } catch (e) {
+        // return a Error message describing the reason 
+        console.log(e)    
+        throw Error("Error while looking for the question")
+    }
+}
+
+exports.checkSecurityAnswer = async function (user) {
+   
+    console.log("Pregunta recibida: ", user.answer)
+
+
+    try {
+        
+        var exists = await User.exists({email : user.email})
+        if (exists)
+        {   
+            var result = false
+            var userFind = await User.findOne({email : user.email}  )
+            if (user.answer === userFind.answer){
+                var result = true
+            }
+            else{
+                throw Error("Answer invalid")
+            }
+            return result;
+        }
+        else
+            throw Error("Email invalid")
+    } catch (e) {
+        // return a Error message describing the reason 
+        console.log(e)    
+        throw Error("Error while comparing answers")
+    }
+}

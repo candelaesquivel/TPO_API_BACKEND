@@ -16,6 +16,7 @@ var loginRouter = require('./routes/login');
 var registerRouter = require('./routes/register');
 var profileRouter = require('./routes/profile');
 var recipeRouter= require('./routes/recipes')
+var securityQuestionRouter= require('./routes/securityQuestion')
 
 //instancio el servidor
 var app = express();
@@ -43,6 +44,8 @@ app.use('/login', loginRouter);
 app.use('/register', registerRouter);
 app.use('/profile', profileRouter);
 app.use('/recipes',recipeRouter);
+app.use('/securityQ',securityQuestionRouter);
+
 
 //console.log("processENV",process.env);
 if (process.env.NODE_ENV === 'Development') {
