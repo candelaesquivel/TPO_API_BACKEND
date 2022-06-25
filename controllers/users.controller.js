@@ -19,7 +19,7 @@ exports.getUsers = async function (req, res, next) {
 
 exports.createUser = async function (req, res, next) {
     // Req.Body contains the form submit values.
-    console.log("llegue al controller",req.body)
+    console.log("LLegue al controller de registro",req.body)
     
     var User = {
         name: req.body.name,
@@ -30,8 +30,6 @@ exports.createUser = async function (req, res, next) {
         securityQ : req.body.securityQ,
         answer : req.body.answer
     }
-
-    // To Do: Validate Data 
 
     try {
         // Calling the Service function with the new object from the Request Body
@@ -69,5 +67,22 @@ exports.updateUser = async function (req, res, next) {
         return res.status(200).json({status: 200, data: updatedUser, message: "Succesfully Updated User"})
     } catch (e) {
         return res.status(400).json({status: 400., message: e.message})
+    }
+}
+
+exports.loginUser = async function (req, res, next) {
+    // Req.Body contains the form submit values.
+    console.log("body",req.body)
+    var User = {
+        email: req.body.email,
+        password: req.body.password
+    }
+    try {
+        // Calling the Service function with the new object from the Request Body
+        var loginUser = await UserService.loginUser(User);
+        return res.status(201).json({loginUser, message: "Succesfully login"})
+    } catch (e) {
+        //Return an Error Response Message with Code and the Error Message.
+        return res.status(400).json({status: 400, message: "Invalid username or password"})
     }
 }

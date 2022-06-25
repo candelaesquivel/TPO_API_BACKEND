@@ -47,13 +47,20 @@ exports.createUser = async function (user) {
 
     try {
         // Saving the User 
-        var savedUser = await newUser.save();
-        var token = jwt.sign({
-            id: savedUser._id
-        }, process.env.SECRET, {
-            expiresIn: 86400 // expires in 24 hours
-        });
-        return token;
+        var exists = await User.exists({email : newUser.email})
+
+        if (!exists)
+        {
+            var savedUser = await newUser.save();
+            var token = jwt.sign({
+                id: savedUser._id
+            }, process.env.SECRET, {
+                expiresIn: 86400 // expires in 24 hours
+            });
+            return token;
+        }
+        else
+            throw Error("Email is used by another user")
     } catch (e) {
         // return a Error message describing the reason 
         console.log(e)    
