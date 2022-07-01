@@ -45,7 +45,7 @@ exports.updateRecipe = async function (req, res, next) {
         id : req.body.id,
         name:req.body.name ,
         ingredients: req.body.ingredients,
-        idCategory: req.body.idCategory,
+        categories: req.body.categories,
         difficulty:req.body.difficulty,
         process : req.body.process,
         averageMark: req.body.averageMark,

@@ -33,8 +33,9 @@ exports.updateRecipe = async function (recipe) {
     
     try {
         //Find the old User Object by the Id
-        var oldRecipe = await Recipe.findById(recipe.id);
+        var oldRecipe = await Recipe.findOne({idRecipe : recipe.id});
     } catch (e) {
+        console.log(e);
         throw Error("Error occured while Finding the Recipe")
     }
     // If no old User Object exists return false
@@ -44,7 +45,9 @@ exports.updateRecipe = async function (recipe) {
     }
     else
         console.log("Old Recipe Servicio: ", oldRecipe)
- 
+    
+    console.log(oldRecipe);
+
     oldRecipe.name = recipe.name
     oldRecipe.ingredients = recipe.ingredients
     oldRecipe.idCategory = recipe.idCategory
@@ -58,9 +61,10 @@ exports.updateRecipe = async function (recipe) {
     
 
     try {
-        var savedRecipe = await oldRecipe.save()
+        var savedRecipe = await oldRecipe.save();
         return savedRecipe;
     } catch (e) {
+        console.log("Exception: ", e);
         throw Error("And Error occured while updating the Recipe");
     }
 }
@@ -80,6 +84,7 @@ exports.deleteRecipe = async function(idRecipe){
         }
         return deleted;
     } catch (e) {
+        console.log(e);
         throw Error("Error Occured while Deleting the Recipe")
     }
 }
@@ -99,8 +104,6 @@ exports.createRecipe = async function(recipe){
         publicationStatus : recipe.publicationStatus,
         userEmail: recipe.userEmail
     })
-
-    console.log("Entro en Crear Receta")
 
     // create the recipe
     try {
