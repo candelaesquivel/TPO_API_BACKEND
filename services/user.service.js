@@ -111,7 +111,8 @@ exports.loginUser = async function (logInUser) {
         {
             var userData = await User.findOne({email : logInUser.email})
             var passwordIsValid = bcrypt.compareSync(logInUser.password,userData.password);
-            if (!passwordIsValid) throw Error("Invalid username/password")
+            if (!passwordIsValid) 
+                throw Error("Contraseña no es valida")
 
             var token = jwt.sign({
                 id: userData._id
@@ -121,11 +122,11 @@ exports.loginUser = async function (logInUser) {
             return {token:token, user: userData };
         }
         else
-            throw Error("Email is not linked to an user")
+            throw Error("El correo no esta asociado a ninguna cuenta")
     } catch (e) {
         // return a Error message describing the reason 
-        console.log(e)    
-        throw Error("Error while Log in User")
+        console.log("Mensaje Service", e.message)    
+        throw Error(e)
     }
 }
 

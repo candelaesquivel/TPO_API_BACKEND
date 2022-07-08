@@ -83,8 +83,9 @@ exports.loginUser = async function (req, res, next) {
         var loginUser = await UserService.loginUser(User);
         return res.status(201).json({loginUser, message: "Succesfully login"})
     } catch (e) {
+        console.log("Mensaje: ", e.message)
         //Return an Error Response Message with Code and the Error Message.
-        return res.status(400).json({status: 400, message: "Invalid username or password"})
+        return res.status(400).json({status: 400, message: ""})
     }
 }
 
