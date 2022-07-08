@@ -13,7 +13,7 @@ exports.getUsers = async function (req, res, next) {
         return res.status(200).json({status: 200, data: Users, message: "Succesfully Users Recieved"});
     } catch (e) {
         //Return an Error Response Message with Code and the Error Message.
-        return res.status(400).json({status: 400, message: e.message});
+        return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
     }
 }
 
@@ -38,7 +38,7 @@ exports.createUser = async function (req, res, next) {
     } catch (e) {
         //Return an Error Response Message with Code and the Error Message.
         console.log(e)
-        return res.status(400).json({status: 400, message: "User Creation was Unsuccesfull"})
+        return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
     }
 }
 
@@ -47,7 +47,7 @@ exports.updateUser = async function (req, res, next) {
 
     // Id is necessary for the update
     if (!req.body.email) {
-        return res.status(400).json({status: 400., message: "Email be present"})
+        return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
     }
     
     var User = {
@@ -66,7 +66,7 @@ exports.updateUser = async function (req, res, next) {
         var updatedUser = await UserService.updateUser(User)
         return res.status(200).json({status: 200, data: updatedUser, message: "Succesfully Updated User"})
     } catch (e) {
-        return res.status(400).json({status: 400., message: e.message})
+        return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
     }
 }
 
@@ -83,9 +83,9 @@ exports.loginUser = async function (req, res, next) {
         var loginUser = await UserService.loginUser(User);
         return res.status(201).json({loginUser, message: "Succesfully login"})
     } catch (e) {
-        console.log("Mensaje: ", e.message)
+        console.log("Exception:", e)
         //Return an Error Response Message with Code and the Error Message.
-        return res.status(400).json({status: 400, message: ""})
+        return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
     }
 }
 
@@ -100,7 +100,7 @@ exports.getSecurityQuestionUser = async function (req, res, next) {
         return res.status(201).json({data : question, message: "Question find"})
     } catch (e) {
         //Return an Error Response Message with Code and the Error Message.
-        return res.status(400).json({status: 400, message: "Invalid email"})
+        return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
     }
 }
 
@@ -116,6 +116,6 @@ exports.checkSecurityAnswer = async function (req, res, next) {
         return res.status(201).json({data : answer, message: "Answer correct"})
     } catch (e) {
         //Return an Error Response Message with Code and the Error Message.
-        return res.status(400).json({status: 400, message: "Invalid answer"})
+        return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
     }
 }

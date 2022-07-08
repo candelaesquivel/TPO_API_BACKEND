@@ -14,7 +14,7 @@ exports.getRecipes = async function (req, res, next){
          return res.status(200).json({status: 200, data: Recipes, message: "Succesfully Recipes Recieved"});
      } catch (e) {
          //Return an Error Response Message with Code and the Error Message.
-         return res.status(400).json({status: 400, message: e.message});
+        return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
      }
 }
 
@@ -30,7 +30,7 @@ exports.getRecipesByEmail = async function (req, res, next){
         return res.status(200).json({status: 200, data: Recipes, message: "Succesfully Recipes Recieved"});
     } catch (e) {
         //Return an Error Response Message with Code and the Error Message.
-        return res.status(400).json({status: 400, message: e.message});
+        return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
     }
 }
 
@@ -38,7 +38,7 @@ exports.updateRecipe = async function (req, res, next) {
 
     // Id is necessary for the update
     if (!req.body.id) {
-        return res.status(400).json({status: 400, message: "Id be present"})
+        return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
     }
     
     var Recipe = {
@@ -62,7 +62,7 @@ exports.updateRecipe = async function (req, res, next) {
         var updatedRecipe = await RecipeService.updateRecipe(Recipe)
         return res.status(200).json({status: 200, data: updatedRecipe, message: "Succesfully Updated Recipe"})
     } catch (e) {
-        return res.status(400).json({status: 400., message: e.message})
+        return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
     }
 }
 
@@ -78,7 +78,7 @@ exports.deleteRecipe = async function (req, res, next) {
         //var deleted = await Recipe.deleteRecipe(id)
         res.status(200).send("Succesfully Deleted... ");
     } catch (e) {
-        return res.status(400).json({status: 400, message: e.message})
+        return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
     }
 }
 
@@ -101,7 +101,7 @@ exports.createRecipe = async function (req, res, next) {
         var createdRecipe = await RecipeService.createRecipe(recipe)
         return res.status(201).json({data : createdRecipe, message: "Succesfully Created Recipe"})
     } catch (e) {
-        return res.status(400).json({status: 400, message: e.message})
+        return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
     }
 }
 
@@ -118,6 +118,6 @@ exports.califyRecipe = async function (req, res, next) {
         res.status(200).send("Succesfully calify ");
     } catch (e) {
         console.log(e)
-        return res.status(400).json({status: 400, message: e.message})
+        return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
     }
 }

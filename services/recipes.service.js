@@ -3,9 +3,12 @@ var Recipe = require('../models/Recipe.model');
 var CalificationUsers = require('../models/CalificationUser.model');
 var User = require('../models/User.model');
 
+var ServiceException = require('../exceptions/serviceException').ServiceException;
+var ErrorCodes = require('../exceptions/serviceException').ErrorCodes;
+
 // Saving the context of this module inside the _the variable
 _this = this
-var mongoose = require('mongoose')
+var mongoose = require('mongoose');
 
 exports.getRecipes = async function (query, page, limit) {
 
@@ -25,7 +28,7 @@ exports.getRecipes = async function (query, page, limit) {
     } catch (e) {
         // return a Error message describing the reason 
         console.log("error services",e)
-        throw Error('Error while Paginating Users');
+        throw new ServiceException('Error al consultar las recetas', ErrorCodes.ERROR_IN_DB_OPERATION);
     }
 }
 
@@ -36,7 +39,7 @@ exports.updateRecipe = async function (recipe) {
         var oldRecipe = await Recipe.findOne({idRecipe : recipe.id});
     } catch (e) {
         console.log(e);
-        throw Error("Error occured while Finding the Recipe")
+        throw new ServiceException("Error al buscar la receta", ErrorCodes.ERROR_IN_DB_OPERATION);
     }
     // If no old User Object exists return false
     if (!oldRecipe) {
@@ -65,7 +68,7 @@ exports.updateRecipe = async function (recipe) {
         return savedRecipe;
     } catch (e) {
         console.log("Exception: ", e);
-        throw Error("And Error occured while updating the Recipe");
+        throw new ServiceException("Error al actualizar la receta", ErrorCodes.ERROR_IN_DB_OPERATION);
     }
 }
 
@@ -80,12 +83,12 @@ exports.deleteRecipe = async function(idRecipe){
         console.log(deleted)
 
         if (deleted.n === 0 && deleted.ok === 1) {
-            throw Error("REcipe Could not be deleted")
+            throw new ServiceException("Error al borrar la receta", ErrorCodes.ERROR_IN_DB_OPERATION)
         }
         return deleted;
     } catch (e) {
         console.log(e);
-        throw Error("Error Occured while Deleting the Recipe")
+        throw new ServiceException("Error al borrar la receta", ErrorCodes.ERROR_IN_DB_OPERATION)
     }
 }
 
@@ -115,10 +118,13 @@ exports.createRecipe = async function(recipe){
             return savedRecipe;
         }
         else
-            throw Error("Id Recipe is being used by another recipe")
+            throw new ServiceException("Receta ya existente con ese id", ErrorCodes.ERROR_RECIPE_ID_IN_USE)
         
     } catch (e) {
-        throw Error("Error Occured while creating the Recipe")
+        if (e instanceof ServiceException)
+            throw e;
+        else
+            throw new ServiceException("Error mientras se creaba la receta", ErrorCodes.ERROR_IN_DB_OPERATION)
     }
 }
 
@@ -133,25 +139,28 @@ exports.califyRecipe = async function (email, calification, recipe ) {
         var oldRecipe = await Recipe.findOne({idRecipe : recipe.idRecipe})
     } catch (e) {
         console.log(e)
-        throw Error("Error occured while Finding the Recipe")
+        throw new ServiceException("Error al buscar la receta", ErrorCodes.ERROR_IN_DB_OPERATION)
     }
     // If no old User Object exists return false
     if (!oldRecipe) {
-        throw Error('Recipe not found')
+        throw new ServiceException("Receta no encontrada", ErrorCodes.ERROR_RECIPE_NOT_FOUND)
     }
 
     try {
         var userExist = await User.exists({email : email})
         if (!userExist)
-            throw Error("The mail of calify user don't exist in DB")
+            throw new ServiceException("El usuario calificador no existe", ErrorCodes.ERROR_MAIL_NOT_ASSOCIATED)
     } catch (e) {
-        throw Error("Error occured while Finding the Email at the user databases")
+        if (e instanceof ServiceException)
+            throw e;
+        else
+            throw new ServiceException("Error al calificar la receta con los datos del usuario", ErrorCodes.ERROR_IN_DB_OPERATION)
     }
 
     try {
         var existCalification = await CalificationUsers.exists({email: email , idRecipe : recipe.idRecipe})
     } catch (e) {
-        throw Error("Error occured while Finding the Califications")
+        throw new ServiceException("Error al calificar la receta", ErrorCodes.ERROR_IN_DB_OPERATION)
     }
 
     if (!existCalification){
@@ -160,7 +169,7 @@ exports.califyRecipe = async function (email, calification, recipe ) {
         oldRecipe.averageMark = oldRecipe.averageMark / oldRecipe.countMark
     }
     else{
-        throw Error('Error: A user can not calify two times the same recipe')
+        throw new ServiceException("Una receta no puede ser calificada 2 veces por el mismo usuario", ErrorCodes.ERROR_DUPLICATE_CALIFY)
     }
 
     try {
@@ -168,7 +177,7 @@ exports.califyRecipe = async function (email, calification, recipe ) {
     }
     catch(e){
         console.log(e)
-        throw Error('Error: Recipe Mark can not be updated')
+        throw new ServiceException("Error al calificar la receta", ErrorCodes.ERROR_IN_DB_OPERATION)
     }
 
     try {
@@ -176,7 +185,7 @@ exports.califyRecipe = async function (email, calification, recipe ) {
     }
     catch(e){
         console.log(e)
-        throw Error('Error: Calification can not be updated')
+        throw new ServiceException("Error al calificar la receta", ErrorCodes.ERROR_IN_DB_OPERATION)
     }
 
     return recipeUpdated
