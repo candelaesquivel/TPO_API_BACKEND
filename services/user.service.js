@@ -75,6 +75,40 @@ exports.createUser = async function (user) {
     }
 }
 
+exports.updateUserData = async function (user){
+    try {
+        //Find the old User Object by the Id
+        var oldUser = await User.findOne({email : user.email});
+    } catch (e) {
+        throw new ServiceException("Error al actualizar los datos del usuario", ErrorCodes.ERROR_IN_DB_OPERATION)
+    }
+    // If no old User Object exists return false
+    if (!oldUser) {
+        console.log('Usuario No conseguido')
+        return false;
+    }
+    else
+        console.log("Old User Servicio: ", oldUser)
+    //Edit the User Object
+    oldUser.name = user.name
+    oldUser.lastName = user.lastName
+    oldUser.phone = user.phone
+    try {
+        var savedUser = await oldUser.save()
+
+        var userReturnData = {
+            name : savedUser.name,
+            lastName : savedUser.lastName,
+            phone : savedUser.phone,
+            email : savedUser.email
+        }
+
+        return userReturnData;
+    } catch (e) {
+        throw new ServiceException("Error al actualizar los datos del usuario", ErrorCodes.ERROR_IN_DB_OPERATION)
+    }
+}
+
 exports.updateUser = async function (user) {
     
     try {
@@ -126,7 +160,15 @@ exports.loginUser = async function (logInUser) {
             }, process.env.SECRET, {
                 expiresIn: 86400 // expires in 24 hours
             });
-            return {token:token, user: userData };
+
+            var userReturnData = {
+                name : userData.name,
+                lastName : userData.lastName,
+                phone : userData.phone,
+                email : userData.email
+            }
+
+            return {token:token, user: userReturnData };
         }
         else
             throw new ServiceException("El correo no esta asociado a ninguna cuenta", ErrorCodes.ERROR_MAIL_NOT_ASSOCIATED)

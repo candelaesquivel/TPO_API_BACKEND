@@ -6,7 +6,7 @@ var Authorization = require('../auth/authorization');
 
 // Authorize each API with middleware and map to the Controller Functions
 /* GET users listing. */
-router.post('/modify', Authorization, UserController.updateUser)
+router.post('/modify', Authorization, UserController.updateUserData)
 
 // Export the Router
 module.exports = router;

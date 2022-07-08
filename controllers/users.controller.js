@@ -10,7 +10,7 @@ exports.getUsers = async function (req, res, next) {
     try {
         var Users = await UserService.getUsers({}, page, limit)
         // Return the Users list with the appropriate HTTP password Code and Message.
-        return res.status(200).json({status: 200, data: Users, message: "Succesfully Users Recieved"});
+        return res.status(201).json({status: 200, data: Users, message: "Succesfully Users Recieved"});
     } catch (e) {
         //Return an Error Response Message with Code and the Error Message.
         return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
@@ -42,6 +42,27 @@ exports.createUser = async function (req, res, next) {
     }
 }
 
+exports.updateUserData = async function (req, res, next) {
+
+    // Id is necessary for the update
+    if (!req.body.email) {
+        return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
+    }
+    
+    var User = {
+        name: req.body.name,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        phone: req.body.phone,
+    }
+
+    try {
+        var updatedUser = await UserService.updateUserData(User);
+        return res.status(201).json({status: 200, userData: updatedUser, message: "Succesfully Updated User"})
+    } catch (e) {
+        return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
+    }
+}
 
 exports.updateUser = async function (req, res, next) {
 
@@ -64,7 +85,7 @@ exports.updateUser = async function (req, res, next) {
 
     try {
         var updatedUser = await UserService.updateUser(User)
-        return res.status(200).json({status: 200, data: updatedUser, message: "Succesfully Updated User"})
+        return res.status(201).json({status: 200, data: updatedUser, message: "Succesfully Updated User"})
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
     }
@@ -112,8 +133,8 @@ exports.checkSecurityAnswer = async function (req, res, next) {
         answer: req.body.answer,
     }
     try {
-        var answer = await UserService.checkSecurityAnswer(User);
-        return res.status(201).json({data : answer, message: "Answer correct"})
+        var isAnswerValid = await UserService.checkSecurityAnswer(User);
+        return res.status(201).json({data : isAnswerValid, message: "Answer correct"})
     } catch (e) {
         //Return an Error Response Message with Code and the Error Message.
         return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
