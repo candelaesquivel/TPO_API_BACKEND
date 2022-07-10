@@ -84,16 +84,16 @@ exports.deleteRecipe = async function (req, res, next) {
 
 exports.createRecipe = async function (req, res, next) {
     var recipe = {
-        idRecipe: req.body.idRecipe,
+        idRecipe: 0,
         name: req.body.name,
-        ingredients: req.body.ingredients,
+        photo: req.body.photo,
+        state : req.body.state,
         categories: req.body.categories,
+        ingredients: req.body.ingredients,
         difficulty: req.body.difficulty,
         process : req.body.process,
         averageMark: 0,
         countMark: 0,
-        photo: req.body.photo,
-        publicationStatus : false,
         userEmail: req.body.userEmail
     }
 

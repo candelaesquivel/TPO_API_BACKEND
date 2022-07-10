@@ -94,8 +94,22 @@ exports.deleteRecipe = async function(idRecipe){
 
 exports.createRecipe = async function(recipe){
 
+    console.log("Enter in Service");
+    try {
+        var isEmpty = await Recipe.find({}).length > 0
+        var maxId = 0;
+        if (!isEmpty)
+            maxId = await Recipe.find({}).sort({'idRecipe' : -1}).limit(1).then(doc => doc[0].idRecipe);
+
+        console.log("MaxDoc", maxId);
+
+    }catch (e){
+        console.log(e);
+        throw new ServiceException("Error mientras se creaba la receta", ErrorCodes.ERROR_IN_DB_OPERATION)
+    }
+
     var newRecipe = new Recipe({
-        idRecipe: recipe.idRecipe,
+        idRecipe: maxId + 1,
         name: recipe.name,
         ingredients: recipe.ingredients,
         categories: recipe.categories,
@@ -104,23 +118,27 @@ exports.createRecipe = async function(recipe){
         averageMark: recipe.averageMark,
         countMark: recipe.countMark,
         photo: recipe.photo,
-        publicationStatus : recipe.publicationStatus,
+        publicationStatus : recipe.state,
         userEmail: recipe.userEmail
     })
+
+    console.log("Back Recipe Create: ", newRecipe)
 
     // create the recipe
     try {
         var exists = await Recipe.exists({idRecipe : newRecipe.idRecipe})
-
+        console.log("Exist Recipe: ", exists)
         if (!exists)
         {
             var savedRecipe = await newRecipe.save();
+            console.log("Recipe Created")
             return savedRecipe;
         }
         else
             throw new ServiceException("Receta ya existente con ese id", ErrorCodes.ERROR_RECIPE_ID_IN_USE)
         
     } catch (e) {
+        console.log(e);
         if (e instanceof ServiceException)
             throw e;
         else

@@ -12,7 +12,7 @@ var RecipeSchema = new mongoose.Schema({
     averageMark: Number,
     countMark: Number,
     photo: String,
-    publicationStatus : Number,
+    publicationStatus : Boolean,
     userEmail: String
 })
 
