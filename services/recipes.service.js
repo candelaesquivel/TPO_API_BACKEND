@@ -99,7 +99,12 @@ exports.createRecipe = async function(recipe){
 
     console.log("Enter in Service");
     try {
-        var isEmpty = await Recipe.find({}).length > 0
+        var recipes = await Recipe.find({});
+        var isEmpty = recipes.length === 0;
+
+        console.log('Recipes: ', recipes)
+        console.log('IsEmpty: ', isEmpty)
+
         var maxId = 0;
         if (!isEmpty)
             maxId = await Recipe.find({}).sort({'idRecipe' : -1}).limit(1).then(doc => doc[0].idRecipe);
@@ -215,7 +220,7 @@ exports.califyRecipe = async function (email, calification, recipe ) {
 
 exports.createRecipeImg = async function(imageData) {
     //subir imagen a cloudinary
-    let imagen = process.env.UPLOAD_DIR + imageData.imageName;
+    const imagen = process.env.UPLOAD_DIR + imageData.imageName;
 
     try {
         let result = await cloudinary.uploader.upload(imagen);
