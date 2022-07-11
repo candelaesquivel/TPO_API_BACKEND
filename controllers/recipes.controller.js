@@ -82,6 +82,31 @@ exports.deleteRecipe = async function (req, res, next) {
     }
 }
 
+exports.uploadRecipeImage = async function (req, res, next) {
+    console.log("ImgUser",req.body)
+    // Id is necessary for the update
+    if (!req.body.email) {
+        return res.status(400).json({status: 400., message: "Mail must be present"})
+    }
+
+    let recipeImg = {
+        email: req.body.email,
+        imageName : req.body.imageName
+    }
+    
+    try {
+
+        if (recipeImg.imageName!=='')
+            var newUserImg = await RecipeService.createRecipeImg(recipeImg);
+        
+        return res.status(201).json({status: 201, message: "Imagen cargada", imgUrl : newUserImg});
+        
+    } catch (e) {
+        console.log("error guardar imagen",e)
+        return res.status(400).json({status: 400., message: e.message})
+    }
+}
+
 exports.createRecipe = async function (req, res, next) {
     var recipe = {
         idRecipe: 0,

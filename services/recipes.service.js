@@ -10,6 +10,9 @@ var ErrorCodes = require('../exceptions/serviceException').ErrorCodes;
 _this = this
 var mongoose = require('mongoose');
 
+//configurar cloudinary
+const cloudinary = require('cloudinary').v2;
+
 exports.getRecipes = async function (query, page, limit) {
 
     // Options setup for the mongoose paginate
@@ -207,4 +210,21 @@ exports.califyRecipe = async function (email, calification, recipe ) {
     }
 
     return recipeUpdated
+}
+
+
+exports.createRecipeImg = async function(imageData) {
+    //subir imagen a cloudinary
+    let imagen = process.env.UPLOAD_DIR + imageData.imageName;
+
+    try {
+        let result = await cloudinary.uploader.upload(imagen);
+        return result.secure_url;
+
+    }catch (e){
+        console.log(e);
+        throw ServiceException('Error en el proceso de carga de la imagen', ErrorCodes.ERROR_IN_DB_OPERATION)
+    }
+
+
 }

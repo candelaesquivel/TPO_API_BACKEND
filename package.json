@@ -8,7 +8,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "bluebird": "^3.5.1",
-    "cloudinary": "^1.23.0",
+    "cloudinary": "^1.30.0",
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.5",
     "debug": "~2.6.9",
@@ -20,6 +20,7 @@
     "mongoose": "^5.12.9",
     "mongoose-paginate": "^5.0.3",
     "morgan": "~1.9.0",
+
     "nodemailer": "^6.6.0",
     "nodemon": "^1.19.4",
     "to": "^0.2.9",
