@@ -8,14 +8,41 @@ exports.getRecipes = async function (req, res, next){
      // Check the existence of the query parameters, If doesn't exists assign a default value
      var page = req.query.page ? req.query.page : 1
      var limit = req.query.limit ? req.query.limit : 10;
+
+     console.log("Body: ", req.body)
+
+     var filters = {
+        name : req.body.name,
+        ingredients : req.body.ingredients.split(','),
+        difficulty : parseInt(req.body.difficulty),
+        categories : req.body.categories.split(',')
+     }
+
      try {
-         var Recipes = await RecipeService.getRecipes({}, page, limit)
+         var recipes = await RecipeService.getRecipes({}, page, limit, filters)
          // Return the Users list with the appropriate HTTP password Code and Message.
-         return res.status(200).json({status: 200, data: Recipes, message: "Succesfully Recipes Recieved"});
+         return res.status(201).json({status: 201, data: recipes, message: "Succesfully Recipes Recieved"});
      } catch (e) {
          //Return an Error Response Message with Code and the Error Message.
         return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
      }
+}
+
+exports.getRecipeById = async function (req, res, next){
+
+    const id = req.body.idRecipe
+    console.log('Recipe Id Backend: ', id);
+    // Check the existence of the query parameters, If doesn't exists assign a default value
+    try {
+        const fields = 'ingredients categories idRecipe name difficulty process averageMark countMark photo publicationStatus'
+        var recipe = await RecipeService.getRecipes({idRecipe : id})
+        console.log("Recipe Data Backend: ", recipe[0].ingredients)
+        // Return the Users list with the appropriate HTTP password Code and Message.
+        return res.status(201).json({status: 201, data: recipe[0], message: "Succesfully Recipes Recieved"});
+    } catch (e) {
+        //Return an Error Response Message with Code and the Error Message.
+        return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
+    }
 }
 
 exports.getRecipesByEmail = async function (req, res, next){
@@ -23,11 +50,12 @@ exports.getRecipesByEmail = async function (req, res, next){
     // Check the existence of the query parameters, If doesn't exists assign a default value
     var page = req.query.page ? req.query.page : 1
     var limit = req.query.limit ? req.query.limit : 10;
-    var email = req.body.email;
+    var email = req.body.userEmail;
     try {
-        var Recipes = await RecipeService.getRecipes({userEmail : email}, page, limit)
+        const fields = 'ingredients categories idRecipe name difficulty process averageMark countMark photo publicationStatus'
+        var recipes = await RecipeService.getRecipes({userEmail : email}, page, limit, fields)
         // Return the Users list with the appropriate HTTP password Code and Message.
-        return res.status(200).json({status: 200, data: Recipes, message: "Succesfully Recipes Recieved"});
+        return res.status(201).json({status: 201, data: recipes, message: "Succesfully Recipes Recieved"});
     } catch (e) {
         //Return an Error Response Message with Code and the Error Message.
         return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
@@ -60,7 +88,7 @@ exports.updateRecipe = async function (req, res, next) {
 
     try {
         var updatedRecipe = await RecipeService.updateRecipe(Recipe)
-        return res.status(200).json({status: 200, data: updatedRecipe, message: "Succesfully Updated Recipe"})
+        return res.status(201).json({status: 201, data: updatedRecipe, message: "Succesfully Updated Recipe"})
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
     }
@@ -76,7 +104,7 @@ exports.deleteRecipe = async function (req, res, next) {
 
     try {
         //var deleted = await Recipe.deleteRecipe(id)
-        res.status(200).send("Succesfully Deleted... ");
+        res.status(201).send("Succesfully Deleted... ");
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
     }
@@ -102,7 +130,7 @@ exports.uploadRecipeImage = async function (req, res, next) {
         return res.status(201).json({status: 201, message: "Imagen cargada", imgUrl : newUserImg});
         
     } catch (e) {
-        console.log("error guardar imagen",e)
+        console.log("error guardar imagen", e)
         return res.status(400).json({status: 400., message: e.message})
     }
 }
@@ -113,8 +141,8 @@ exports.createRecipe = async function (req, res, next) {
         name: req.body.name,
         photo: req.body.photo,
         state : req.body.state,
-        categories: req.body.categories,
-        ingredients: req.body.ingredients,
+        categories: req.body.categories.split(','),
+        ingredients: req.body.ingredients.split(','),
         difficulty: req.body.difficulty,
         process : req.body.process,
         averageMark: 0,
@@ -140,7 +168,7 @@ exports.califyRecipe = async function (req, res, next) {
 
     try {
         var calify = await RecipeService.califyRecipe(email,calification,recipe)
-        res.status(200).send("Succesfully calify ");
+        res.status(201).send("Succesfully calify ");
     } catch (e) {
         console.log(e)
         return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})

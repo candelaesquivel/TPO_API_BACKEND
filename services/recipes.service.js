@@ -11,9 +11,24 @@ _this = this
 var mongoose = require('mongoose');
 
 //configurar cloudinary
-const cloudinary = require('cloudinary').v2;
+var cloudinary = require('cloudinary');
+cloudinary.config({ 
+    cloud_name: 'drcuhadnu', //reemplazar con sus credenciales
+    api_key: '312588935631792', 
+    api_secret: 'ZbbYlm3KzTXVOieH1RTfbGE_8zU'
+});
 
-exports.getRecipes = async function (query, page, limit) {
+const prefixStr = (source, target) => {
+    if (target.length === 0)
+        return true;
+
+    const srcLower = source.toLowerCase();
+    const targetLower = target.toLowerCase();
+    
+    return srcLower.startsWith(targetLower);
+}
+
+exports.getRecipes = async function (query, page, limit, filters) {
 
     // Options setup for the mongoose paginate
     var options = {
@@ -22,11 +37,48 @@ exports.getRecipes = async function (query, page, limit) {
     }
     // Try Catch the awaited promise to handle the error 
     try {
-        console.log("Query",query)
-        var Recipes = await Recipe.find(query).lean()
-        // Return the Userd list that was retured by the mongoose promise
-        console.log(Recipes);
-        return Recipes;
+        var recipes = null;
+
+        console.log("Filter: ", filters)
+
+        const filterByDifficult = filters.difficulty !== 0
+
+        const filterByName = filters.name !== ''
+
+        const filterByCategories = filters.categories[0] !== ''
+
+        const filterByIngredients = filters.ingredients[0] !== ''
+        recipes = await Recipe.find({})
+
+        recipes = recipes.filter((itr) => {
+
+            let matchName = true;
+            let matchDiff = true;
+            let matchIngrendients = true;
+            let matchCategory = true;
+
+            if (filterByDifficult)
+                matchDiff = filters.difficulty === itr.difficulty
+
+            if (filterByName)
+                matchName = prefixStr(itr.name, filters.name);
+            
+            if (filterByCategories)
+                matchCategory = filters.categories.every(userCategory => {
+                    return itr.categories.includes(userCategory);
+                })
+
+            if (filterByIngredients)
+                matchIngrendients = filters.ingredients.every(userIngredient => {
+                    return itr.ingredients.find(recipeIngredient => {
+                        return prefixStr(recipeIngredient, userIngredient)
+                    }) !== undefined
+                })
+
+            return matchName && matchDiff && matchIngrendients && matchCategory
+        })
+            
+        return recipes;
 
     } catch (e) {
         // return a Error message describing the reason 
@@ -225,8 +277,8 @@ exports.createRecipeImg = async function(imageData) {
     try {
         let result = await cloudinary.uploader.upload(imagen);
         return result.secure_url;
-
     }catch (e){
+        console.log('Error en cloudinary: ', e)
         console.log(e);
         throw ServiceException('Error en el proceso de carga de la imagen', ErrorCodes.ERROR_IN_DB_OPERATION)
     }
