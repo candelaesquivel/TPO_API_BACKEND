@@ -28,7 +28,7 @@ const prefixStr = (source, target) => {
     return srcLower.startsWith(targetLower);
 }
 
-exports.getRecipes = async function (query, page, limit, filters) {
+exports.getRecipes = async function (query, page, limit) {
 
     // Options setup for the mongoose paginate
     var options = {
@@ -37,47 +37,13 @@ exports.getRecipes = async function (query, page, limit, filters) {
     }
     // Try Catch the awaited promise to handle the error 
     try {
-        var recipes = null;
-
-        console.log("Filter: ", filters)
-
-        const filterByDifficult = filters.difficulty !== 0
-
-        const filterByName = filters.name !== ''
-
-        const filterByCategories = filters.categories[0] !== ''
-
-        const filterByIngredients = filters.ingredients[0] !== ''
-        recipes = await Recipe.find({})
-
-        recipes = recipes.filter((itr) => {
-
-            let matchName = true;
-            let matchDiff = true;
-            let matchIngrendients = true;
-            let matchCategory = true;
-
-            if (filterByDifficult)
-                matchDiff = filters.difficulty === itr.difficulty
-
-            if (filterByName)
-                matchName = prefixStr(itr.name, filters.name);
-            
-            if (filterByCategories)
-                matchCategory = filters.categories.every(userCategory => {
-                    return itr.categories.includes(userCategory);
-                })
-
-            if (filterByIngredients)
-                matchIngrendients = filters.ingredients.every(userIngredient => {
-                    return itr.ingredients.find(recipeIngredient => {
-                        return prefixStr(recipeIngredient, userIngredient)
-                    }) !== undefined
-                })
-
-            return matchName && matchDiff && matchIngrendients && matchCategory
+        var recipes = await Recipe.find(query, {
+            _id : 0,
+            userEmail : 0,
+            _countMark : 0,
+            __v : 0
         })
-            
+
         return recipes;
 
     } catch (e) {
@@ -128,11 +94,11 @@ exports.updateRecipe = async function (recipe) {
 }
 
 
-exports.deleteRecipe = async function(idRecipe){
+exports.deleteRecipe = async function(idToDelete){
     // Delete the recipe
     try {
         var deleted = await Recipe.deleteOne({
-            _id: idRecipe
+            idRecipe: idToDelete
         })
 
         console.log(deleted)

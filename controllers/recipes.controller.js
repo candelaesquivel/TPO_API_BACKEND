@@ -3,11 +3,30 @@ var RecipeService = require('../services/recipes.service');
 // Saving the context of this module inside the _the variable
 _this = this;
 
+const addFiltersToQuery = function(query, filters){
+
+    const filterByDifficult = filters.difficulty !== 0
+    const filterByName = filters.name !== ''
+    const filterByCategories = filters.categories[0] !== ''
+
+    if (filterByName)
+        query.name = {$regex : '^' + filters.name, $options : 'i'}
+
+    if (filterByDifficult)
+        query.difficulty = filters.difficulty;
+
+    if (filterByCategories)
+        query.categories = { $all : filters.categories }
+
+    return query
+}
+
 exports.getRecipes = async function (req, res, next){
 
      // Check the existence of the query parameters, If doesn't exists assign a default value
      var page = req.query.page ? req.query.page : 1
      var limit = req.query.limit ? req.query.limit : 10;
+     var query = { publicationStatus : true }
 
      console.log("Body: ", req.body)
 
@@ -18,8 +37,10 @@ exports.getRecipes = async function (req, res, next){
         categories : req.body.categories.split(',')
      }
 
+     addFiltersToQuery(query, filters)
+
      try {
-         var recipes = await RecipeService.getRecipes({}, page, limit, filters)
+         var recipes = await RecipeService.getRecipes(query, page, limit)
          // Return the Users list with the appropriate HTTP password Code and Message.
          return res.status(201).json({status: 201, data: recipes, message: "Succesfully Recipes Recieved"});
      } catch (e) {
@@ -34,7 +55,6 @@ exports.getRecipeById = async function (req, res, next){
     console.log('Recipe Id Backend: ', id);
     // Check the existence of the query parameters, If doesn't exists assign a default value
     try {
-        const fields = 'ingredients categories idRecipe name difficulty process averageMark countMark photo publicationStatus'
         var recipe = await RecipeService.getRecipes({idRecipe : id})
         console.log("Recipe Data Backend: ", recipe[0].ingredients)
         // Return the Users list with the appropriate HTTP password Code and Message.
@@ -51,9 +71,38 @@ exports.getRecipesByEmail = async function (req, res, next){
     var page = req.query.page ? req.query.page : 1
     var limit = req.query.limit ? req.query.limit : 10;
     var email = req.body.userEmail;
+
+    var query = {
+        userEmail : email
+    }
+
+    var filters = {
+        name : req.body.name,
+        ingredients : req.body.ingredients.split(','),
+        difficulty : parseInt(req.body.difficulty),
+        categories : req.body.categories.split(',')
+    }
+
+    const filterByIngredients = filters.ingredients[0] !== ''
+    addFiltersToQuery(query, filters)    
+
     try {
-        const fields = 'ingredients categories idRecipe name difficulty process averageMark countMark photo publicationStatus'
-        var recipes = await RecipeService.getRecipes({userEmail : email}, page, limit, fields)
+        var recipes = await RecipeService.getRecipes(query, page, limit)
+
+        recipes = recipes.filter((itr) => {
+
+            let matchIngrendients = true;
+
+            if (filterByIngredients)
+                matchIngrendients = filters.ingredients.every(userIngredient => {
+                    return itr.ingredients.find(recipeIngredient => {
+                        return prefixStr(recipeIngredient, userIngredient)
+                    }) !== undefined
+                })
+
+            return matchIngrendients
+        })
+
         // Return the Users list with the appropriate HTTP password Code and Message.
         return res.status(201).json({status: 201, data: recipes, message: "Succesfully Recipes Recieved"});
     } catch (e) {
@@ -97,14 +146,12 @@ exports.updateRecipe = async function (req, res, next) {
 exports.deleteRecipe = async function (req, res, next) {
 
     console.log(req);
-
-    var id = req.query.id;
-
-    console.log("Id Controoller: ", id)
+    var id = parseInt(req.body.idRecipe);
+    console.log("Id Recipe Deleted: ", id)
 
     try {
-        //var deleted = await Recipe.deleteRecipe(id)
-        res.status(201).send("Succesfully Deleted... ");
+        var deletedRecipe = await RecipeService.deleteRecipe(id);
+        return res.status(201).json({status: 201, data: deletedRecipe, message: "Succesfully Deleted Recipe"})
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
     }
