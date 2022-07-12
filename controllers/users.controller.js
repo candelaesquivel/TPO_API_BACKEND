@@ -10,7 +10,7 @@ exports.getUsers = async function (req, res, next) {
     try {
         var Users = await UserService.getUsers({}, page, limit)
         // Return the Users list with the appropriate HTTP password Code and Message.
-        return res.status(201).json({status: 200, data: Users, message: "Succesfully Users Recieved"});
+        return res.status(201).json({status: 201, data: Users, message: "Succesfully Users Recieved"});
     } catch (e) {
         //Return an Error Response Message with Code and the Error Message.
         return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
@@ -58,7 +58,7 @@ exports.updateUserData = async function (req, res, next) {
 
     try {
         var updatedUser = await UserService.updateUserData(User);
-        return res.status(201).json({status: 200, userData: updatedUser, message: "Succesfully Updated User"})
+        return res.status(201).json({status: 201, userData: updatedUser, message: "Succesfully Updated User"})
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
     }
@@ -85,7 +85,7 @@ exports.updateUser = async function (req, res, next) {
 
     try {
         var updatedUser = await UserService.updateUser(User)
-        return res.status(201).json({status: 200, data: updatedUser, message: "Succesfully Updated User"})
+        return res.status(201).json({status: 201, data: updatedUser, message: "Succesfully Updated User"})
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
     }
