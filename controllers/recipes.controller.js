@@ -124,12 +124,9 @@ exports.updateRecipe = async function (req, res, next) {
         categories: req.body.categories.split(','),
         difficulty:req.body.difficulty,
         process : req.body.process,
-        averageMark: req.body.averageMark,
-        countMark:req.body.countMark,
         photo: req.body.photo,
         state : req.body.state,
         userEmail:req.body.userEmail 
-
     }
 
     console.log("Receta en Controller: ", Recipe);
@@ -182,6 +179,7 @@ exports.uploadRecipeImage = async function (req, res, next) {
 }
 
 exports.createRecipe = async function (req, res, next) {
+    
     var recipe = {
         idRecipe: 0,
         name: req.body.name,

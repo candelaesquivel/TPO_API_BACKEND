@@ -70,20 +70,14 @@ exports.updateRecipe = async function (recipe) {
     else
         console.log("Old Recipe Servicio: ", oldRecipe)
     
-    console.log(oldRecipe);
-
     oldRecipe.name = recipe.name
     oldRecipe.categories = recipe.categories
     oldRecipe.ingredients = recipe.ingredients
-    oldRecipe.idCategory = recipe.idCategory
     oldRecipe.difficulty = recipe.difficulty
     oldRecipe.process = recipe.process
-    oldRecipe.averageMark = recipe.averageMark
-    oldRecipe.countMark = recipe.countMark
     oldRecipe.photo = recipe.photo
     oldRecipe.publicationStatus = recipe.state
-    oldRecipe.email = recipe.email
-    
+    oldRecipe.userEmail = recipe.userEmail
 
     try {
         var savedRecipe = await oldRecipe.save();
