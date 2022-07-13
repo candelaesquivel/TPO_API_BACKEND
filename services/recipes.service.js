@@ -73,6 +73,7 @@ exports.updateRecipe = async function (recipe) {
     console.log(oldRecipe);
 
     oldRecipe.name = recipe.name
+    oldRecipe.categories = recipe.categories
     oldRecipe.ingredients = recipe.ingredients
     oldRecipe.idCategory = recipe.idCategory
     oldRecipe.difficulty = recipe.difficulty
@@ -80,7 +81,7 @@ exports.updateRecipe = async function (recipe) {
     oldRecipe.averageMark = recipe.averageMark
     oldRecipe.countMark = recipe.countMark
     oldRecipe.photo = recipe.photo
-    oldRecipe.publicationStatus = recipe.publicationStatus
+    oldRecipe.publicationStatus = recipe.state
     oldRecipe.email = recipe.email
     
 

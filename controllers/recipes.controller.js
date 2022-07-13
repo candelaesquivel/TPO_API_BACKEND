@@ -56,7 +56,6 @@ exports.getRecipeById = async function (req, res, next){
     // Check the existence of the query parameters, If doesn't exists assign a default value
     try {
         var recipe = await RecipeService.getRecipes({idRecipe : id})
-        console.log("Recipe Data Backend: ", recipe[0].ingredients)
         // Return the Users list with the appropriate HTTP password Code and Message.
         return res.status(201).json({status: 201, data: recipe[0], message: "Succesfully Recipes Recieved"});
     } catch (e) {
@@ -114,21 +113,21 @@ exports.getRecipesByEmail = async function (req, res, next){
 exports.updateRecipe = async function (req, res, next) {
 
     // Id is necessary for the update
-    if (!req.body.id) {
+    if (!req.body.idRecipe) {
         return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
     }
     
     var Recipe = {
-        id : req.body.id,
+        id : req.body.idRecipe,
         name:req.body.name ,
-        ingredients: req.body.ingredients,
-        categories: req.body.categories,
+        ingredients: req.body.ingredients.split(','),
+        categories: req.body.categories.split(','),
         difficulty:req.body.difficulty,
         process : req.body.process,
         averageMark: req.body.averageMark,
         countMark:req.body.countMark ,
         photo: req.body.photo,
-        publicationStatus : req.body.publicationStatus,
+        state : req.body.state,
         userEmail:req.body.userEmail 
 
     }
