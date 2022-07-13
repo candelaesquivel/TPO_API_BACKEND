@@ -21,6 +21,16 @@ const addFiltersToQuery = function(query, filters){
     return query
 }
 
+const prefixStr = (source, target) => {
+    if (target.length === 0)
+        return true;
+
+    const srcLower = source.toLowerCase();
+    const targetLower = target.toLowerCase();
+    
+    return srcLower.startsWith(targetLower);
+}
+
 exports.getRecipes = async function (req, res, next){
 
      // Check the existence of the query parameters, If doesn't exists assign a default value
@@ -28,7 +38,7 @@ exports.getRecipes = async function (req, res, next){
      var limit = req.query.limit ? req.query.limit : 10;
      var query = { publicationStatus : true }
 
-     console.log("Body: ", req.body)
+     console.log("Ingredients: ", req.body.ingredients)
 
      var filters = {
         name : req.body.name,
@@ -41,6 +51,23 @@ exports.getRecipes = async function (req, res, next){
 
      try {
          var recipes = await RecipeService.getRecipes(query, page, limit)
+         const filterByIngredients = filters.ingredients[0] != '';
+
+         if (filterByIngredients){
+            recipes = recipes.filter((itr) => {
+
+                let matchIngrendients = true;
+    
+                matchIngrendients = filters.ingredients.every(userIngredient => {
+                    return itr.ingredients.find(recipeIngredient => {
+                        return prefixStr(recipeIngredient, userIngredient)
+                    }) !== undefined
+                })
+    
+                return matchIngrendients
+            })
+         }
+         
          // Return the Users list with the appropriate HTTP password Code and Message.
          return res.status(201).json({status: 201, data: recipes, message: "Succesfully Recipes Recieved"});
      } catch (e) {
@@ -82,25 +109,27 @@ exports.getRecipesByEmail = async function (req, res, next){
         categories : req.body.categories.split(',')
     }
 
-    const filterByIngredients = filters.ingredients[0] !== ''
     addFiltersToQuery(query, filters)    
 
     try {
         var recipes = await RecipeService.getRecipes(query, page, limit)
 
-        recipes = recipes.filter((itr) => {
+        const filterByIngredients = filters.ingredients[0] != '';
 
-            let matchIngrendients = true;
+         if (filterByIngredients){
+            recipes = recipes.filter((itr) => {
 
-            if (filterByIngredients)
+                let matchIngrendients = true;
+    
                 matchIngrendients = filters.ingredients.every(userIngredient => {
                     return itr.ingredients.find(recipeIngredient => {
                         return prefixStr(recipeIngredient, userIngredient)
                     }) !== undefined
                 })
-
-            return matchIngrendients
-        })
+    
+                return matchIngrendients
+            })
+         }
 
         // Return the Users list with the appropriate HTTP password Code and Message.
         return res.status(201).json({status: 201, data: recipes, message: "Succesfully Recipes Recieved"});
