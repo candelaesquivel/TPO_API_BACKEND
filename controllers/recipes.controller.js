@@ -125,7 +125,7 @@ exports.updateRecipe = async function (req, res, next) {
         difficulty:req.body.difficulty,
         process : req.body.process,
         averageMark: req.body.averageMark,
-        countMark:req.body.countMark ,
+        countMark:req.body.countMark,
         photo: req.body.photo,
         state : req.body.state,
         userEmail:req.body.userEmail 
@@ -206,14 +206,13 @@ exports.createRecipe = async function (req, res, next) {
 
 
 exports.califyRecipe = async function (req, res, next) {
+
     var email = req.body.email;
     var calification = req.body.calification;
-    var recipe = {
-        idRecipe : req.body.idRecipe
-    }
+    var idRecipe = req.body.idRecipe;
 
     try {
-        var calify = await RecipeService.califyRecipe(email,calification,recipe)
+        var calify = await RecipeService.califyRecipe(email,calification,idRecipe)
         res.status(201).send("Succesfully calify ");
     } catch (e) {
         console.log(e)

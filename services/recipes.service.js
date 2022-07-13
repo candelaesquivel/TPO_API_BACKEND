@@ -173,15 +173,16 @@ exports.createRecipe = async function(recipe){
     }
 }
 
-exports.califyRecipe = async function (email, calification, recipe ) {
+exports.califyRecipe = async function (email, calification, idRecipeToCalify ) {
+
     var newCalify = new CalificationUsers({
         email: email,
         calification: calification,
-        idRecipe: recipe.idRecipe
+        idRecipe: idRecipeToCalify
     })
 
     try {
-        var oldRecipe = await Recipe.findOne({idRecipe : recipe.idRecipe})
+        var oldRecipe = await Recipe.findOne({idRecipe : idRecipeToCalify})
     } catch (e) {
         console.log(e)
         throw new ServiceException("Error al buscar la receta", ErrorCodes.ERROR_IN_DB_OPERATION)
@@ -190,6 +191,8 @@ exports.califyRecipe = async function (email, calification, recipe ) {
     if (!oldRecipe) {
         throw new ServiceException("Receta no encontrada", ErrorCodes.ERROR_RECIPE_NOT_FOUND)
     }
+
+    console.log("OLD RECIPE: ", oldRecipe)
 
     try {
         var userExist = await User.exists({email : email})
@@ -203,14 +206,15 @@ exports.califyRecipe = async function (email, calification, recipe ) {
     }
 
     try {
-        var existCalification = await CalificationUsers.exists({email: email , idRecipe : recipe.idRecipe})
+        var existCalification = await CalificationUsers.exists({email: email , idRecipe : idRecipeToCalify})
     } catch (e) {
         throw new ServiceException("Error al calificar la receta", ErrorCodes.ERROR_IN_DB_OPERATION)
     }
 
     if (!existCalification){
         oldRecipe.countMark = oldRecipe.countMark + 1
-        oldRecipe.averageMark += calification
+        console.log('Count Mark: ', oldRecipe.countMark)
+        oldRecipe.averageMark = oldRecipe.averageMark + calification
         oldRecipe.averageMark = oldRecipe.averageMark / oldRecipe.countMark
     }
     else{
