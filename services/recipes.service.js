@@ -205,7 +205,7 @@ exports.califyRecipe = async function (email, calification, idRecipeToCalify ) {
         throw new ServiceException("Error al calificar la receta", ErrorCodes.ERROR_IN_DB_OPERATION)
     }
 
-    if (!existCalification){
+    if (existCalification ){
         oldRecipe.countMark = oldRecipe.countMark + 1
         console.log('Count Mark: ', oldRecipe.countMark)
         oldRecipe.averageMark = oldRecipe.averageMark + calification
