@@ -75,6 +75,62 @@ exports.createUser = async function (user) {
     }
 }
 
+exports.updateUserPassword = async function (user){
+
+    if (!user.currentPassword){
+        throw new ServiceException("Se requiere el password actual para validar", ErrorCodes.ERROR_PASSWORD_NOT_VALID)
+    }
+
+    if (!user.email){
+        throw new ServiceException("Se requiere el mail para actualizar los datos", ErrorCodes.ERROR_MAIL_NOT_ASSOCIATED)
+    }
+
+    try {
+        //Find the old User Object by the Id
+        var oldUser = await User.findOne({email : user.email});
+    } catch (e) {
+        throw new ServiceException("Error al actualizar los datos del usuario", ErrorCodes.ERROR_IN_DB_OPERATION)
+    }
+    // If no old User Object exists return false
+    if (!oldUser) {
+        console.log('Usuario No conseguido')
+        return false;
+    }
+    else
+        console.log("Old User Password Servicio: ", oldUser)
+    
+    if (!user.newPassword){
+        throw new ServiceException("Se requiere el valor de password para actualizar", ErrorCodes.ERROR_PASSWORD_NOT_VALID)
+    }
+
+    console.log("User Current Password: ", user.currentPassword)
+    console.log("Hashed Password", bcrypt.hashSync(user.currentPassword, 8));
+    const sameCurrent = bcrypt.compareSync(user.currentPassword, oldUser.password);
+    console.log("Same Current: ", sameCurrent)
+
+    if (!sameCurrent){
+        throw new ServiceException("El password actual no es correcto", ErrorCodes.ERROR_PASSWORD_NOT_VALID)
+    }
+
+    var hashedPassword = bcrypt.hashSync(user.newPassword, 8);
+    oldUser.password = hashedPassword
+
+    try {
+        var savedUser = await oldUser.save()
+
+        var userReturnData = {
+            name : savedUser.name,
+            lastName : savedUser.lastName,
+            phone : savedUser.phone,
+            email : savedUser.email
+        }
+
+        return userReturnData;
+    } catch (e) {
+        throw new ServiceException("Error al actualizar los datos del usuario", ErrorCodes.ERROR_IN_DB_OPERATION)
+    }
+}
+
 exports.updateUserData = async function (user){
     try {
         //Find the old User Object by the Id
@@ -150,6 +206,7 @@ exports.loginUser = async function (logInUser) {
 
         if (exists)
         {
+            console.log("Login Password: ". logInUser)
             var userData = await User.findOne({email : logInUser.email})
             var passwordIsValid = bcrypt.compareSync(logInUser.password,userData.password);
             if (!passwordIsValid) 

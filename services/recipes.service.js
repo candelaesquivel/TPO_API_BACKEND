@@ -196,6 +196,10 @@ exports.califyRecipe = async function (email, calification, idRecipeToCalify ) {
         throw new ServiceException("Error al calificar la receta", ErrorCodes.ERROR_IN_DB_OPERATION)
     }
 
+    if (userRecipe) {
+        throw new ServiceException("El creador de la receta no puede calificar sus propias recetas", ErrorCodes.ERROR_DUPLICATE_CALIFY)
+    }
+
     if (!existCalification && !userRecipe){
         oldRecipe.countMark = oldRecipe.countMark + 1
         console.log('Count Mark: ', oldRecipe.countMark)

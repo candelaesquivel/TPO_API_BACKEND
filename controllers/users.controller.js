@@ -1,5 +1,4 @@
 var UserService = require('../services/user.service');
-
 // Saving the context of this module inside the _the variable
 _this = this;
 
@@ -59,6 +58,22 @@ exports.updateUserData = async function (req, res, next) {
     try {
         var updatedUser = await UserService.updateUserData(User);
         return res.status(201).json({status: 201, userData: updatedUser, message: "Succesfully Updated User"})
+    } catch (e) {
+        return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
+    }
+}
+
+exports.updateUserPassword = async function(req, res, next) {
+    
+    var User = {
+        currentPassword : req.body.currentPassword,
+        email: req.body.email,
+        newPassword: req.body.newPassword
+    }
+
+    try {
+        var updatedUser = await UserService.updateUserPassword(User);
+        return res.status(201).json({status: 201, message: "Password actualizado correctamente"})
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
     }
