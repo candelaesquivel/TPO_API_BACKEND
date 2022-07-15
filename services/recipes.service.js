@@ -176,7 +176,7 @@ exports.califyRecipe = async function (email, calification, idRecipeToCalify ) {
     })
 
     try {
-        var oldRecipe = await Recipe.findOne({idRecipe : idRecipeToCalify})
+        var oldRecipe = await Recipe.findOne({idRecipe : idRecipeToCalify })
     } catch (e) {
         console.log(e)
         throw new ServiceException("Error al buscar la receta", ErrorCodes.ERROR_IN_DB_OPERATION)
@@ -200,12 +200,13 @@ exports.califyRecipe = async function (email, calification, idRecipeToCalify ) {
     }
 
     try {
+        var userRecipe = await Recipe.exists({idRecipe : idRecipeToCalify , userEmail : email})
         var existCalification = await CalificationUsers.exists({email: email , idRecipe : idRecipeToCalify})
     } catch (e) {
         throw new ServiceException("Error al calificar la receta", ErrorCodes.ERROR_IN_DB_OPERATION)
     }
 
-    if (existCalification ){
+    if (!existCalification && !userRecipe){
         oldRecipe.countMark = oldRecipe.countMark + 1
         console.log('Count Mark: ', oldRecipe.countMark)
         oldRecipe.averageMark = oldRecipe.averageMark + calification
