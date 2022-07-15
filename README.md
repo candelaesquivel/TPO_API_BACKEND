@@ -7,7 +7,8 @@
 3. [Instalación](#Instalación)
 4. [Funcionalidades](#Funcionalidades)
 5. [Documentación](#Documentación)
-6. [Integrantes](#Integrantes)
+6. [Documentación de Postman](#Postman)
+7. [Integrantes](#Integrantes)
 
 
 ## Introducción
@@ -103,13 +104,15 @@ Dentro de cada receta de la pantalla de inicio esta la opción de "leer más" , 
 <img width="456" alt="image" src="https://user-images.githubusercontent.com/80803466/178846573-aa71f896-cb85-49f6-aa6f-8e6ddeed3fa0.png">
 
 Si al intentar hacer log in no recuerda su contraseña, puede seleccionar la opción de "olvide contraseña" y será redirigido a la página de recuperar contraseña.
-En la misma se le pedirá su email y se buscara si es un usuario registrado para mostrarle la pregunta de seguridad que agrego cuando creo su cuenta, usted deberá contestar la respuesta y de ser correcta será redirigido a una página donde podrá recuperar su contraseña.
+En la misma se le pedirá su email y se buscara si es un usuario registrado para mostrarle la pregunta de seguridad que agrego cuando creo su cuenta, usted deberá contestar la respuesta y de ser correcta podra modificar su contraseña.
 
 ![image](https://user-images.githubusercontent.com/80803466/178847088-b37c07fe-7412-44a4-9ca3-ab9bb5449024.png)
 
+<img width="332" alt="image" src="https://user-images.githubusercontent.com/80803466/179293579-75868691-c563-4844-a4ab-1a17a462e6c8.png">
+
 <img width="420" alt="image" src="https://user-images.githubusercontent.com/80803466/178847852-b8c2d0c8-767c-49c6-8640-204ff1349060.png">
 
-<img width="507" alt="image" src="https://user-images.githubusercontent.com/80803466/178847795-df7b2f13-4468-48e1-8d02-e017186fdcda.png">
+<img width="298" alt="image" src="https://user-images.githubusercontent.com/80803466/179293412-160363cd-1fdd-4d5a-a2b3-1503e103a0c9.png">
 
 Si al hacer log in puede ingresar sin problemas, será redirigido a la página de su perfil donde podrá modificar cualquiera de sus datos excepto por el email.
 
@@ -199,6 +202,8 @@ Codigos de error
                                              ERROR_DUPLICATE_CALIFY      : 8
 
 Autenticación por token , libreria usada : JSON Web Token (JWT).  
+
+# Postman
 
 Documentacion de las peticiones en postman : https://documenter.getpostman.com/view/21197481/UzQuN4zt
 
