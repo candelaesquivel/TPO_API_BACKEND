@@ -32,7 +32,7 @@ exports.getRecipes = async function (query, page, limit) {
             userEmail : 0,
             _countMark : 0,
             __v : 0
-        }).limit(limit)
+        }).sort({averageMark : -1}).limit(limit)
 
         return recipes;
 
