@@ -21,6 +21,18 @@ const addFiltersToQuery = function(query, filters){
     return query
 }
 
+const addOrRemoveLimit = function(limit, filters){
+    const filterByDifficult = filters.difficulty !== 0
+    const filterByName = filters.name !== ''
+    const filterByCategories = filters.categories[0] !== ''
+    const filterByIngredients = filters.ingredients[0] !== ''
+
+    if (filterByDifficult || filterByName || filterByCategories || filterByIngredients)
+        limit = 0
+
+    return limit;
+}
+
 const prefixStr = (source, target) => {
     if (target.length === 0)
         return true;
@@ -35,7 +47,7 @@ exports.getRecipes = async function (req, res, next){
 
      // Check the existence of the query parameters, If doesn't exists assign a default value
      var page = req.query.page ? req.query.page : 1
-     var limit = req.query.limit ? req.query.limit : 10;
+     var limit = req.query.limit ? req.query.limit : 9;
      var query = { publicationStatus : true }
 
      console.log("Ingredients: ", req.body.ingredients)
@@ -48,6 +60,9 @@ exports.getRecipes = async function (req, res, next){
      }
 
      addFiltersToQuery(query, filters)
+     limit = addOrRemoveLimit(limit, filters);
+
+     console.log("Limit: ", limit);
 
      try {
          var recipes = await RecipeService.getRecipes(query, page, limit)
@@ -95,7 +110,7 @@ exports.getRecipesByEmail = async function (req, res, next){
 
     // Check the existence of the query parameters, If doesn't exists assign a default value
     var page = req.query.page ? req.query.page : 1
-    var limit = req.query.limit ? req.query.limit : 10;
+    var limit = req.query.limit ? req.query.limit : 0;
     var email = req.body.userEmail;
 
     var query = {
