@@ -75,6 +75,41 @@ exports.createUser = async function (user) {
     }
 }
 
+exports.updateUserPasswordFromRecovery = async function (user){
+
+    if (!user.newPassword){
+        throw new ServiceException("Se requiere la contraseña para guardar", ErrorCodes.ERROR_PASSWORD_NOT_VALID)
+    }
+
+    if (!user.email){
+        throw new ServiceException("Se requiere el mail para actualizar los datos", ErrorCodes.ERROR_MAIL_NOT_ASSOCIATED)
+    }
+
+    try {
+        //Find the old User Object by the Id
+        var oldUser = await User.findOne({email : user.email});
+    } catch (e) {
+        throw new ServiceException("Error al actualizar los datos del usuario", ErrorCodes.ERROR_IN_DB_OPERATION)
+    }
+    // If no old User Object exists return false
+    if (!oldUser) {
+        console.log('Usuario No conseguido')
+        return false;
+    }
+    else
+        console.log("Old User Password Servicio: ", oldUser)
+    
+    var hashedPassword = bcrypt.hashSync(user.newPassword, 8);
+    oldUser.password = hashedPassword
+
+    try {
+        var savedUser = await oldUser.save()
+        return;
+    } catch (e) {
+        throw new ServiceException("Error al actualizar los datos del usuario", ErrorCodes.ERROR_IN_DB_OPERATION)
+    }
+}
+
 exports.updateUserPassword = async function (user){
 
     if (!user.currentPassword){

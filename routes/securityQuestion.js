@@ -7,6 +7,7 @@ var UserController = require('../controllers/users.controller');
 /* GET users listing. */
 router.post('/', UserController.getSecurityQuestionUser)
 router.post('/answer', UserController.checkSecurityAnswer)
+router.post('/recover-password', UserController.updateUserPasswordFromRecovery)
 
 // Export the Router
 module.exports = router;

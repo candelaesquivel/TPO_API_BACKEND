@@ -63,6 +63,21 @@ exports.updateUserData = async function (req, res, next) {
     }
 }
 
+exports.updateUserPasswordFromRecovery = async function(req, res, next) {
+    
+    var userData = {
+        email: req.body.email,
+        newPassword: req.body.newPassword
+    }
+
+    try {
+        var updatedUser = await UserService.updateUserPasswordFromRecovery(userData);
+        return res.status(201).json({status: 201, message: "Contraseña actualizado correctamente"})
+    } catch (e) {
+        return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
+    }
+}
+
 exports.updateUserPassword = async function(req, res, next) {
     
     var User = {
