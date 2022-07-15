@@ -26,7 +26,7 @@ Base de datos: NO SQL (MongoDB).
 Link para descargarse Node.js : https://nodejs.org/es/
 
 ## Instalación
- Instrucciones de instalación frontend
+## Instrucciones de instalación frontend
 ```console
 $ npm install
 ```
@@ -37,7 +37,7 @@ Si todo se ejecuto correctamente deberas ser redirigido a la pagina principal de
 
 <img width="897" alt="image" src="https://user-images.githubusercontent.com/80803466/178839520-8a23f9fe-2399-4479-94bf-776abe9c8e1e.png">
 
-Instrucciones de instalación backend
+## Instrucciones de instalación backend
 ```console
 $ npm install -g nodemon
 ```
