@@ -240,9 +240,8 @@ exports.califyRecipe = async function (req, res, next) {
 
     try {
         var calify = await RecipeService.califyRecipe(email,calification,idRecipe)
-        res.status(201).send("Succesfully calify ");
+        res.status(201).json({status: 201, message : "Receta calificada correctamente"})
     } catch (e) {
-        console.log(e)
         return res.status(400).json({status: 400, message: e.message, errorCode : e.errorCode})
     }
 }

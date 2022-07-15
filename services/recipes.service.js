@@ -18,16 +18,6 @@ cloudinary.config({
     api_secret: 'ZbbYlm3KzTXVOieH1RTfbGE_8zU'
 });
 
-const prefixStr = (source, target) => {
-    if (target.length === 0)
-        return true;
-
-    const srcLower = source.toLowerCase();
-    const targetLower = target.toLowerCase();
-    
-    return srcLower.startsWith(targetLower);
-}
-
 exports.getRecipes = async function (query, page, limit) {
 
     // Options setup for the mongoose paginate
