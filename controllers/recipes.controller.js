@@ -231,7 +231,7 @@ exports.createRecipe = async function (req, res, next) {
         state : req.body.state,
         categories: req.body.categories.split(','),
         ingredients: req.body.ingredients.split(','),
-        difficulty: req.body.difficulty,
+        difficulty: req.body.difficulty ? req.body.difficulty : 1,
         process : req.body.process,
         averageMark: 0,
         countMark: 0,
